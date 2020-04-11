@@ -75,7 +75,7 @@ class Vampire(Unit):
         if self._check_defence(opponent):
             dmg -= opponent._defence
         opponent.health -= dmg
-        self._health += dmg * 0.1
+        self._health += round(dmg * 0.2)
 
     def __str__(self):
         return f'{self._vamp}. Health - {self._health}.'
@@ -115,6 +115,7 @@ class Monk(Unit):
     def __str__(self):
         return f'{self._monk}. Health - {self._health}.'
 
+
 class Rogue(Unit):
     _double_attack = 0.4
     _defence_coeff = 0.4
@@ -138,7 +139,7 @@ class Dwarf(Unit):
 
     def _attack(self, opponent):
         dmg = self._strength
-        if self._count_double_attack():
+        if self._check_double_attack:
             dmg = dmg * 2
         if self._check_defence(opponent):
             dmg -= opponent._defence
@@ -154,23 +155,69 @@ d1 = Dwarf(name='Gimli', strength=30, health=200, defence=15)
 v1 = Vampire(name='Drakula', strength=40, health=200, defence=20)
 m1 = Monk(name='Gendalf', strength=50, health=200, defence=15)
 
-print(r1)
-print(d1)
-print(k1)
-print(v1)
-print(m1)
+#print(r1)
+# print(d1)
+# print(k1)
+# print(v1)
+# print(m1)
+#
+# #print(r1._health)
+# print(v1._health)
+# r1.attack(v1)
+# #print(r1._health)
+# print(v1._health)
+# r1.attack(v1)
+# #print(r1._health)
+# print(v1._health)
+# r1.attack(v1)
+# #print(r1._health)
+# print(v1._health)
+# r1.attack(v1)
+# #print(r1._health)
+# print(v1._health)
 
-#print(r1._health)
-print(v1._health)
-r1.attack(v1)
-#print(r1._health)
-print(v1._health)
-r1.attack(v1)
-#print(r1._health)
-print(v1._health)
-r1.attack(v1)
-#print(r1._health)
-print(v1._health)
-r1.attack(v1)
-#print(r1._health)
-print(v1._health)
+
+class Battle():
+    _opponent1 = None
+    _opponent2 = None
+    _units = None
+
+    def __init__(self, opp1, opp2):
+        if isinstance(opp1, Unit) and isinstance(opp2, Unit):
+            self._opponent1 = opp1
+            self._opponent2 = opp2
+            self._units = (self._opponent1, self._opponent2)
+
+    def _attack_op1(self):
+        self._opponent1._attack(self._opponent2)
+        print(f'{self._opponent1.__class__.__name__} is attacking. Health {self._opponent2.__class__.__name__} - {self._opponent2._health}')
+
+    def _attack_op2(self):
+        self._opponent2._attack(self._opponent1)
+        print(f'{self._opponent2.__class__.__name__} is attacking. Health {self._opponent1.__class__.__name__} - {self._opponent1._health}')
+
+    def _battle(self):
+        random_unit = random.choice(self._units)
+
+        if random_unit == self._opponent1:
+            while 1:
+                self._attack_op1()
+                if self._opponent2._health == 0:
+                    return f'{self._opponent2.__class__.__name__} is dead.'
+
+                self._attack_op2()
+                if self._opponent1._health == 0:
+                    return f'{self._opponent1.__class__.__name__} is dead.'
+
+        else:
+            while 1:
+                self._attack_op2()
+                if self._opponent1._health == 0:
+                    return f'{self._opponent1.__class__.__name__} is dead.'
+
+                self._attack_op1()
+                return f'{self._opponent2.__class__.__name__} is dead.'
+
+
+battle1 = Battle(k1, v1)
+print(battle1._battle())
